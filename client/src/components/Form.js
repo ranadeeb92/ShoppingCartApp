@@ -1,25 +1,24 @@
 import { useState } from "react";
-function EditItemForm({ setShowEditForm, product, onEdit }) {
-  const [title, setTitle] = useState(product.title);
-  const [price, setPrice] = useState(product.price);
-  const [quantity, setQuantity] = useState(product.quantity);
+
+function Form({ onSubmit, formType, onCancel, product = {} }) {
+  const [title, setTitle] = useState(product.title || "");
+  const [price, setPrice] = useState(product.price || "");
+  const [quantity, setQuantity] = useState(product.quantity || "");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onEdit({ ...product, title, price, quantity }, () =>
-      setShowEditForm(false)
-    );
+    onSubmit({ ...product, title, price, quantity });
   };
 
   return (
-    <div className="edit-form">
-      <h3>Edit Product</h3>
-      <form onSubmit={handleSubmit}>
+    <div className="add-form visible">
+      <h3>{formType} Product</h3>
+      <form onSubmit={(e) => handleSubmit(e)}>
         <div className="input-group">
-          <label htmlFor="product-name">Product Name</label>
+          <label htmlFor="product-title">Product Name</label>
           <input
             type="text"
-            id="product-name"
+            id="product-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -47,9 +46,9 @@ function EditItemForm({ setShowEditForm, product, onEdit }) {
 
         <div className="actions form-actions">
           <button className="button" type="submit">
-            Update
+            {formType}
           </button>
-          <button className="button" onClick={() => setShowEditForm(false)}>
+          <button className="button" type="button" onClick={() => onCancel()}>
             Cancel
           </button>
         </div>
@@ -58,4 +57,4 @@ function EditItemForm({ setShowEditForm, product, onEdit }) {
   );
 }
 
-export default EditItemForm;
+export default Form;

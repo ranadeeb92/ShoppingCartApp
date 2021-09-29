@@ -1,23 +1,25 @@
 import { useState } from "react";
-import EditItemForm from "./EditItemForm";
+import Form from "./Form";
 
 function Product({ product, onEdit, onDelete, onAddToCart }) {
   const [showEditForm, setShowEditForm] = useState(false);
 
+  const isInStock = () => {
+    return product.quantity > 0;
+  };
   const handleDelete = () => {
     onDelete(product._id);
   };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    onAddToCart({
-      productId: product._id,
-      title: product.title,
-      price: product.price,
-    });
+    onAddToCart(product);
   };
 
-  console.log(product.quantity);
+  const handleEdit = (product) => {
+    onEdit(product);
+    setShowEditForm(false);
+  };
 
   return (
     <div className="product">
@@ -25,24 +27,31 @@ function Product({ product, onEdit, onDelete, onAddToCart }) {
         <h3>{product.title}</h3>
         <p className="price">{product.price}$</p>
         <p className="quantity">{product.quantity} left in stock</p>
-        <div
-          className="actions product-actions"
-          style={{ display: showEditForm ? "none" : "block" }}
-        >
-          <button className="button add-to-cart" onClick={handleAddToCart}>
-            Add to Cart
-          </button>
-          <button className="button edit" onClick={() => setShowEditForm(true)}>
-            Edit
-          </button>
-        </div>
+
         {showEditForm ? (
-          <EditItemForm
-            setShowEditForm={setShowEditForm}
+          <Form
             product={product}
-            onEdit={onEdit}
+            onSubmit={handleEdit}
+            formType="Edit"
+            onCancel={() => setShowEditForm(false)}
           />
-        ) : null}
+        ) : (
+          <div className="actions product-actions">
+            <button
+              className={`button add-to-cart ${isInStock() ? "" : "disabled"}`}
+              disabled={!isInStock()}
+              onClick={handleAddToCart}
+            >
+              Add to Cart
+            </button>
+            <button
+              className="button edit"
+              onClick={() => setShowEditForm(true)}
+            >
+              Edit
+            </button>
+          </div>
+        )}
         <a className="delete-button" onClick={handleDelete} href="/#">
           <span>X</span>
         </a>
