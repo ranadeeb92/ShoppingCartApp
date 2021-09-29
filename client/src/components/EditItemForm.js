@@ -1,30 +1,61 @@
-function EditItemForm({ setShowEditForm }) {
+import { useState } from "react";
+function EditItemForm({ setShowEditForm, product, onEdit }) {
+  const [title, setTitle] = useState(product.title);
+  const [price, setPrice] = useState(product.price);
+  const [quantity, setQuantity] = useState(product.quantity);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onEdit({ ...product, title, price, quantity }, () =>
+      setShowEditForm(false)
+    );
+  };
+
   return (
     <div className="edit-form">
       <h3>Edit Product</h3>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="input-group">
-          <label for="product-name">Product Name</label>
-          <input type="text" id="product-name" value="Apple 10.5-Inch iPad Pro" />
+          <label htmlFor="product-name">Product Name</label>
+          <input
+            type="text"
+            id="product-name"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div className="input-group">
-          <label for="product-price">Price</label>
-          <input type="text" id="product-price" value="649.99" />
+          <label htmlFor="product-price">Price</label>
+          <input
+            type="text"
+            id="product-price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
         </div>
 
         <div className="input-group">
-          <label for="product-quantity">Quantity</label>
-          <input type="text" id="product-quantity" value="2" />
+          <label htmlFor="product-quantity">Quantity</label>
+          <input
+            type="text"
+            id="product-quantity"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+          />
         </div>
 
         <div className="actions form-actions">
-          <a className="button">Update</a>
-          <a className="button" onClick={() => setShowEditForm(false)}>Cancel</a>
+          <button className="button" type="submit">
+            Update
+          </button>
+          <button className="button" onClick={() => setShowEditForm(false)}>
+            Cancel
+          </button>
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 export default EditItemForm;

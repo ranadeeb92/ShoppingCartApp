@@ -85,6 +85,7 @@ h3 {
 }
 
 .button {
+  margin-left: 5px;
   padding: 5px 12px 5px;
   background: #07575b;
   color: #fff;

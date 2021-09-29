@@ -1,32 +1,75 @@
 import { useState } from "react";
 
-function AddItemForm() {
+function AddItemForm({ onSubmit }) {
   const [visible, setVisible] = useState(false);
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
 
+  const resetInputs = () => {
+    setTitle("");
+    setPrice("");
+    setQuantity("");
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ title, price, quantity }, resetInputs);
+  };
   return (
     <div className={`add-form ${visible ? "visible" : ""}`}>
-      <p><a className="button add-product-button"
-        onClick={() => { setVisible(true) }}>Add A Product</a></p>
+      <p>
+        <button
+          className="button add-product-button"
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          Add A Product
+        </button>
+      </p>
       <h3>Add Product</h3>
-      <form>
+      <form onSubmit={(e) => handleSubmit(e)}>
         <div className="input-group">
-          <label for="product-name">Product Name</label>
-          <input type="text" id="product-name" value="" />
+          <label htmlFor="product-title">Product Name</label>
+          <input
+            type="text"
+            id="product-title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div className="input-group">
-          <label for="product-price">Price</label>
-          <input type="text" id="product-price" value="" />
+          <label htmlFor="product-price">Price</label>
+          <input
+            type="text"
+            id="product-price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
         </div>
 
         <div className="input-group">
-          <label for="product-quantity">Quantity</label>
-          <input type="text" id="product-quantity" value="" />
+          <label htmlFor="product-quantity">Quantity</label>
+          <input
+            type="text"
+            id="product-quantity"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+          />
         </div>
 
         <div className="actions form-actions">
-          <a className="button">Add</a>
-          <a className="button" onClick={() => setVisible(false)}>Cancel</a>
+          <button className="button" type="submit">
+            Add
+          </button>
+          <button
+            className="button"
+            type="button"
+            onClick={() => setVisible(false)}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>
