@@ -1,14 +1,24 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { productDeleted } from "../actions/products";
 import Form from "./Form";
 
-function Product({ product, onEdit, onDelete, onAddToCart }) {
+function Product({ product, onEdit, onAddToCart }) {
   const [showEditForm, setShowEditForm] = useState(false);
+  const dispatch = useDispatch();
 
   const isInStock = () => {
     return product.quantity > 0;
   };
-  const handleDelete = () => {
-    onDelete(product._id);
+
+  const handleDelete = async (e) => {
+    try {
+      await axios.delete(`/api/products/${product._id}`);
+      dispatch(productDeleted(product._id));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleAddToCart = (e) => {
@@ -16,10 +26,10 @@ function Product({ product, onEdit, onDelete, onAddToCart }) {
     onAddToCart(product);
   };
 
-  const handleEdit = (product) => {
-    onEdit(product);
-    setShowEditForm(false);
-  };
+  // const handleEdit = (product) => {
+  //   onEdit(product);
+  //   setShowEditForm(false);
+  // };
 
   return (
     <div className="product">
@@ -31,7 +41,6 @@ function Product({ product, onEdit, onDelete, onAddToCart }) {
         {showEditForm ? (
           <Form
             product={product}
-            onSubmit={handleEdit}
             formType="Edit"
             onCancel={() => setShowEditForm(false)}
           />

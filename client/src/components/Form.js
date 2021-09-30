@@ -1,14 +1,41 @@
+import { useDispatch } from "react-redux";
 import { useState } from "react";
+import axios from "axios";
+import { productAdded, productUpdated } from "../actions/products";
 
-function Form({ onSubmit, formType, onCancel, product = {} }) {
+function Form({ formType, onCancel, product = {} }) {
   const [title, setTitle] = useState(product.title || "");
   const [price, setPrice] = useState(product.price || "");
   const [quantity, setQuantity] = useState(product.quantity || "");
 
-  const handleSubmit = (e) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ ...product, title, price, quantity });
+    if (formType === "Add") {
+      try {
+        const res = await axios.post("/api/products", { ...product, title, price, quantity });
+        const newProduct = res.data;
+        dispatch(productAdded(newProduct))
+        // setProducts(products.concat(data));
+        // setShowForm(false);
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (formType === "Edit") {
+      try {
+        const res = await axios.put(`/api/products/${product._id}`, {
+          ...product, title, quantity, price
+        });
+        const updatedProduct = res.data;
+        dispatch(productUpdated(updatedProduct))
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
   };
+
 
   return (
     <div className="add-form visible">

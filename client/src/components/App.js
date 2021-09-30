@@ -1,41 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ShoppingCart from "./ShoppingCart";
 import Products from "./Products";
 import Form from "./Form";
 import axios from "axios";
 
 const App = () => {
-  const [products, setProducts] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
+  // const [products, setProducts] = useState([]);
+  // const [cartItems, setCartItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await axios.get("/api/products");
-      const data = res.data;
-      setProducts(data);
-    };
-
-    const fetchCartItems = async () => {
-      const res = await axios.get("/api/cart");
-      const data = res.data;
-      setCartItems(data);
-    };
-
-    fetchProducts();
-    fetchCartItems();
-  }, []);
-
   const updateCartItems = (itemToAdd, addedItem) => {
-    if (cartItems.find((item) => item.productId === itemToAdd.productId)) {
-      setCartItems(
-        cartItems.map((item) =>
-          item.productId === itemToAdd.productId ? addedItem : item
-        )
-      );
-    } else {
-      setCartItems(cartItems.concat(addedItem));
-    }
+    // if (cartItems.find((item) => item.productId === itemToAdd.productId)) {
+    //   setCartItems(
+    //     cartItems.map((item) =>
+    //       item.productId === itemToAdd.productId ? addedItem : item
+    //     )
+    //   );
+    // } else {
+    //   setCartItems(cartItems.concat(addedItem));
+    // }
   };
 
   const handleAddToCart = async (product) => {
@@ -54,16 +37,16 @@ const App = () => {
     }
   };
 
-  const handleAddProduct = async (product) => {
-    try {
-      const res = await axios.post("/api/products", { ...product });
-      const data = res.data;
-      setProducts(products.concat(data));
-      setShowForm(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const handleAddProduct = async (product) => {
+  //   try {
+  //     const res = await axios.post("/api/products", { ...product });
+  //     const data = res.data;
+  //     // setProducts(products.concat(data));
+  //     setShowForm(false);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handleProductUpdate = async (product) => {
     try {
@@ -71,7 +54,7 @@ const App = () => {
         ...product,
       });
       const data = res.data;
-      setProducts(products.map((p) => (p._id === product._id ? data : p)));
+      // setProducts(products.map((p) => (p._id === product._id ? data : p)));
     } catch (err) {
       console.log(err);
     }
@@ -80,7 +63,7 @@ const App = () => {
   const handleProductDelete = async (productId) => {
     try {
       await axios.delete(`/api/products/${productId}`);
-      setProducts(products.filter((p) => p._id !== productId));
+      // setProducts(products.filter((p) => p._id !== productId));
     } catch (err) {
       console.log(err);
     }
@@ -89,7 +72,7 @@ const App = () => {
   const handleCheckout = async (callback) => {
     try {
       await axios.post("/api/cart/checkout");
-      setCartItems([]);
+      // setCartItems([]);
       if (callback) {
         callback();
       }
@@ -100,17 +83,15 @@ const App = () => {
 
   return (
     <div id="app">
-      <ShoppingCart items={cartItems} onCheckout={handleCheckout} />
+      <ShoppingCart onCheckout={handleCheckout} />
       <main>
         <Products
-          products={products}
           onEdit={handleProductUpdate}
           onDelete={handleProductDelete}
           onAddToCart={handleAddToCart}
         />
         {showForm ? (
           <Form
-            onSubmit={handleAddProduct}
             formType="Add"
             onCancel={() => setShowForm(false)}
           />
