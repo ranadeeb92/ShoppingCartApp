@@ -1,9 +1,10 @@
 import CartItem from "./CartItem";
 import { useSelector, useDispatch } from "react-redux";
+import { cartItemsCheckout, cartItemsReceived } from "../actions/cartItems";
 import { useEffect } from "react";
-import axios from "axios";
 
-function ShoppingCart({ onCheckout }) {
+function ShoppingCart() {
+  const dispatch = useDispatch();
   const calcTotal = (items) => {
     let total = items.reduce(
       (total, item) => (total += item.price * item.quantity),
@@ -12,22 +13,13 @@ function ShoppingCart({ onCheckout }) {
     return total.toFixed(2);
   };
 
-  const handleCheckout = () => {
-    onCheckout();
+  const handleCheckout = async () => {
+    dispatch(cartItemsCheckout());
   };
 
-  const dispatch = useDispatch()
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const res = await axios.get("/api/cart");
-      const cartItems = res.data;
-      dispatch({ type: "CARTITEMS_RECEIVED", payload: { cartItems } })
-    };
+  useEffect(() => dispatch(cartItemsReceived()), [dispatch]);
 
-    fetchCartItems();
-  }, [dispatch]);
-
-  const cartItems = useSelector(state => state.cartItems);
+  const cartItems = useSelector((state) => state.cartItems);
 
   return (
     <header>
@@ -45,9 +37,10 @@ function ShoppingCart({ onCheckout }) {
           <tbody>
             {cartItems
               .filter((i) => i.quantity !== 0)
-              .map((item) => (
-                <CartItem key={item._id} {...item} />
-              ))}
+              .map((item) => {
+                console.log(item);
+                return <CartItem key={item._id} {...item} />;
+              })}
             <tr>
               <td colSpan="3" className="total">
                 Total: {calcTotal(cartItems)}
